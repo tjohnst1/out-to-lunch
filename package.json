@@ -1,0 +1,26 @@
+{
+  "name": "lunch",
+  "version": "1.0.0",
+  "description": "a small utility to help answer the question of \"what should I get for lunch?\"",
+  "main": "index.js",
+  "scripts": {
+    "watch": "webpack --progress --watch",
+    "start": "webpack-dev-server --open"
+  },
+  "author": "Travis Johnston",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "css-loader": "^0.28.7",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
+    "webpack": "^3.6.0"
+  },
+  "dependencies": {
+    "d3": "^4.10.2",
+    "style-loader": "^0.18.2"
+  }
+}

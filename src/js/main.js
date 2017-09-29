@@ -31,8 +31,6 @@ const pie = d3.pie()
               .value(100 / lunchPlaces.length)
               .sort(null);
 
-
-
 const slice = chartContainer.selectAll('path')
                             .data(pie(lunchPlaces))
                             .enter()
@@ -61,6 +59,9 @@ const innerCircle = svg.append('circle')
                        .attr('transform', `translate(${(pieChart.width / 2) - pieChart.innerWidth}, ${(pieChart.height / 2) - pieChart.innerWidth})`)
                        .style('fill', '#444444');
 
+const triangle = svg.append('path')
+                               .attr('d', `M${pieChart.radius - 20} 0 L${pieChart.radius + 20} 0 L${pieChart.radius} 20 Z`)
+                               .style('fill', "#111111")
 // function createPieChart(chartData) {
 //   const nameSpace = "http://www.w3.org/2000/svg";
 //   const pieChartElement = document.createElementNS(nameSpace, 'svg');

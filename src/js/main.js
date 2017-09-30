@@ -17,7 +17,8 @@ const svg = d3.select('#wheel-container')
               .attr('height', pieChart.height);
 
 const chartContainer = svg.append('g')
-                         .attr('transform', `translate(${pieChart.width / 2}, ${pieChart.height / 2})`);
+                          .attr('transform', `translate(${pieChart.width / 2}, ${pieChart.height / 2})`);
+                          // .style('transition', 'all 600ms ease-in-out');
 
 const arc = d3.arc()
               .innerRadius(pieChart.innerWidth)
@@ -48,7 +49,8 @@ const sliceText = slice.append('text')
                        })
                        .attr("transform", function(d) {
                          var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
-                         return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")"; })
+                         return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
+                       })
                        .attr("dy", ".35em")
                        .attr('text-anchor','middle')
 
@@ -57,11 +59,33 @@ const innerCircle = svg.append('circle')
                        .attr('cy', pieChart.innerWidth)
                        .attr('r', pieChart.innerWidth)
                        .attr('transform', `translate(${(pieChart.width / 2) - pieChart.innerWidth}, ${(pieChart.height / 2) - pieChart.innerWidth})`)
-                       .style('fill', '#444444');
+                       .style('fill', '#444444')
+                       .on('click', selectLunchPlace(chartContainer));
+
+function selectLunchPlace(chart) {
+  const numberOfPlaces = lunchPlaces.length;
+  const degOffset = 360 / numberOfPlaces;
+  let initialOffset = (degOffset / 2);
+  return () => {
+    const randomPlace = Math.floor(Math.random() * lunchPlaces.length);
+    const randomPlaceOffset = randomPlace * degOffset
+    const newOffset = initialOffset + randomPlaceOffset + 720;
+    (function(initialOffset) {
+      chart.transition()
+      //  .ease(d3.easeCircle)
+      .duration(600)
+      .attrTween('transform', function() {
+        console.log(`translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${initialOffset})`, `translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${newOffset})`)
+        return d3.interpolateString(`translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${initialOffset})`, `translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${newOffset})`)
+      })
+    })(initialOffset)
+    initialOffset = newOffset;
+  };
+}
 
 const triangle = svg.append('path')
-                               .attr('d', `M${pieChart.radius - 20} 0 L${pieChart.radius + 20} 0 L${pieChart.radius} 20 Z`)
-                               .style('fill', "#111111")
+                    .attr('d', `M${pieChart.radius - 20} 0 L${pieChart.radius + 20} 0 L${pieChart.radius} 20 Z`)
+                    .style('fill', "#111111")
 // function createPieChart(chartData) {
 //   const nameSpace = "http://www.w3.org/2000/svg";
 //   const pieChartElement = document.createElementNS(nameSpace, 'svg');

@@ -5,11 +5,12 @@ var pieChart = {
   width: 300,
   height: 300,
   innerWidth: 20,
+  colorScale: d3.scaleOrdinal(d3.schemeCategory20c),
+  numberOfItems: lunchPlaces.length,
 };
 
 pieChart.radius = pieChart.width / 2;
-
-const color = d3.scaleOrdinal(d3.schemeCategory20c);
+pieChart.sliceWidth = 360 / pieChart.numberOfItems;
 
 const svg = d3.select('#wheel-container')
               .append('svg')
@@ -17,8 +18,7 @@ const svg = d3.select('#wheel-container')
               .attr('height', pieChart.height);
 
 const chartContainer = svg.append('g')
-                          .attr('transform', `translate(${pieChart.width / 2}, ${pieChart.height / 2})`);
-                          // .style('transition', 'all 600ms ease-in-out');
+                          .attr('transform', `translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${pieChart.sliceWidth / 2})`);
 
 const arc = d3.arc()
               .innerRadius(pieChart.innerWidth)
@@ -29,7 +29,7 @@ const labelArc = d3.arc()
                    .outerRadius(pieChart.radius - 5);
 
 const pie = d3.pie()
-              .value(100 / lunchPlaces.length)
+              .value(100 / pieChart.numberOfItems)
               .sort(null);
 
 const slice = chartContainer.selectAll('path')
@@ -40,7 +40,7 @@ const slice = chartContainer.selectAll('path')
 const sliceBg = slice.append('path')
                      .attr('d', arc)
                      .attr('fill', (d, i) => {
-                       return color(i);
+                       return pieChart.colorScale(i);
                      })
 
 const sliceText = slice.append('text')
@@ -60,19 +60,17 @@ const innerCircle = svg.append('circle')
                        .attr('r', pieChart.innerWidth)
                        .attr('transform', `translate(${(pieChart.width / 2) - pieChart.innerWidth}, ${(pieChart.height / 2) - pieChart.innerWidth})`)
                        .style('fill', '#444444')
-                       .on('click', selectLunchPlace(chartContainer));
+                       .on('click', randomlySelectAPlace(chartContainer));
 
-function selectLunchPlace(chart) {
-  const numberOfPlaces = lunchPlaces.length;
-  const degOffset = 360 / numberOfPlaces;
-  let initialOffset = (degOffset / 2);
+function randomlySelectAPlace(chart) {
+  const numberOfPlaces = pieChart.numberOfItems;
+  let initialOffset = (pieChart.sliceWidth / 2);
   return () => {
-    const randomPlace = Math.floor(Math.random() * lunchPlaces.length);
-    const randomPlaceOffset = randomPlace * degOffset
+    const randomItemIndex = Math.floor(Math.random() * pieChart.numberOfItems);
+    const randomPlaceOffset = randomItemIndex * pieChart.sliceWidth
     const newOffset = initialOffset + randomPlaceOffset + 720;
     (function(initialOffset) {
       chart.transition()
-      //  .ease(d3.easeCircle)
       .duration(600)
       .attrTween('transform', function() {
         console.log(`translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${initialOffset})`, `translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${newOffset})`)
@@ -80,40 +78,19 @@ function selectLunchPlace(chart) {
       })
     })(initialOffset)
     initialOffset = newOffset;
+    showSelection(newOffset)
   };
 }
+
+function showSelection(offset) {
+  document.getElementById('selection-container').innerHTML = '';
+  const selectionIndex = (pieChart.numberOfItems - 1) - (((offset % 360) - (pieChart.sliceWidth / 2)) / pieChart.sliceWidth);
+  setTimeout(() => {
+    document.getElementById('selection-container').innerHTML = lunchPlaces[selectionIndex].name;
+  }, 600)
+}
+
 
 const triangle = svg.append('path')
                     .attr('d', `M${pieChart.radius - 20} 0 L${pieChart.radius + 20} 0 L${pieChart.radius} 20 Z`)
                     .style('fill', "#111111")
-// function createPieChart(chartData) {
-//   const nameSpace = "http://www.w3.org/2000/svg";
-//   const pieChartElement = document.createElementNS(nameSpace, 'svg');
-//   pieChartElement.setAttribute('viewBox', '0 0 32 32');
-//   chartData.forEach((lunchPlace, i) => {
-//     const size = 100 / chartData.length
-//     const dashArr = size.toString() + " 100";
-//     const dashOffset = i !== 0 ? ((size * i) + size) : 0;
-//
-//     const sliceData = Object.assign({}, lunchPlace, {
-//       dashArr,
-//       dashOffset
-//     })
-//     createPieSlice(sliceData, size, pieChartElement);
-//   })
-//   return pieChartElement;
-// }
-
-// function createPieSlice(sliceData, size, pieChartElement) {
-//   const nameSpace = "http://www.w3.org/2000/svg";
-//   const circleEle = document.createElementNS(nameSpace, 'circle');
-//   circleEle.setAttribute('r', 15.93);
-//   circleEle.setAttribute('cx', 15.93);
-//   circleEle.setAttribute('cy', 15.93);
-//   circleEle.setAttribute('stroke', sliceData.color);
-//   circleEle.setAttribute('stroke-dasharray', sliceData.dashArr);
-//   circleEle.setAttribute('stroke-dashoffset', sliceData.dashOffset);
-//   pieChartElement.appendChild(circleEle)
-// }
-
-// document.getElementById('wheel-container').appendChild(createPieChart(lunchPlaces));

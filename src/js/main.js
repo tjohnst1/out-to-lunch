@@ -36,6 +36,9 @@ const slice = chartContainer.selectAll('path')
                             .data(pie(lunchPlaces))
                             .enter()
                             .append('g')
+                            .attr('id', (d, i) => {
+                              return `slice-${i}`;
+                            })
 
 const sliceBg = slice.append('path')
                      .attr('d', arc)
@@ -73,7 +76,6 @@ function randomlySelectAPlace(chart) {
       chart.transition()
       .duration(600)
       .attrTween('transform', function() {
-        console.log(`translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${initialOffset})`, `translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${newOffset})`)
         return d3.interpolateString(`translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${initialOffset})`, `translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${newOffset})`)
       })
     })(initialOffset)
@@ -86,10 +88,50 @@ function showSelection(offset) {
   document.getElementById('selection-container').innerHTML = '';
   const selectionIndex = (pieChart.numberOfItems - 1) - (((offset % 360) - (pieChart.sliceWidth / 2)) / pieChart.sliceWidth);
   setTimeout(() => {
-    document.getElementById('selection-container').innerHTML = lunchPlaces[selectionIndex].name;
+    calloutSelection(selectionIndex)
   }, 600)
+  setTimeout(() => {
+    document.getElementById('selection-container').innerHTML = lunchPlaces[selectionIndex].name;
+  }, 1200)
 }
 
+function calloutSelection(index){
+  const initialColor = d3.select(`#slice-${index} path`).attr('fill').toString();
+  const lighterColor = LightenDarkenColor(initialColor, 30);
+  const darkerColor = LightenDarkenColor(initialColor, -30);
+  d3.select(`#slice-${index} path`).attr('fill', lighterColor)
+  setTimeout(() => {
+    d3.select(`#slice-${index} path`).attr('fill', darkerColor)
+  }, 300)
+  setTimeout(() => {
+    d3.select(`#slice-${index} path`).attr('fill', lighterColor)
+  }, 600)
+  setTimeout(() => {
+    d3.select(`#slice-${index} path`).attr('fill', darkerColor)
+  }, 900)
+  setTimeout(() => {
+    d3.select(`#slice-${index} path`).attr('fill', initialColor)
+  }, 1200)
+}
+
+function LightenDarkenColor(col, amt) {
+    var usePound = false;
+    if (col[0] == "#") {
+        col = col.slice(1);
+        usePound = true;
+    }
+    var num = parseInt(col,16);
+    var r = (num >> 16) + amt;
+    if (r > 255) r = 255;
+    else if  (r < 0) r = 0;
+    var b = ((num >> 8) & 0x00FF) + amt;
+    if (b > 255) b = 255;
+    else if  (b < 0) b = 0;
+    var g = (num & 0x0000FF) + amt;
+    if (g > 255) g = 255;
+    else if (g < 0) g = 0;
+    return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16);
+}
 
 const triangle = svg.append('path')
                     .attr('d', `M${pieChart.radius - 20} 0 L${pieChart.radius + 20} 0 L${pieChart.radius} 20 Z`)

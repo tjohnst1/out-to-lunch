@@ -1,4 +1,5 @@
 @import './vendor/normalize';
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
 
 /*! HTML5 Boilerplate v6.0.1 | MIT License | https://html5boilerplate.com/ */
 
@@ -13,7 +14,6 @@
    ========================================================================== */
 
 html {
-    color: #222;
     font-size: 1em;
     line-height: 1.4;
 }
@@ -99,8 +99,94 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+html {
+  box-sizing: border-box;
+  height: 100%;
+  font-family: 'Montserrat', Helvetica, sans-serif;
+  color: #111111;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+body, main {
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+}
+
 main {
-  padding: 50px;
+  text-align: center;
+  background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  display: flex;
+  flex-direction: column;
+  h1 {
+    margin: 0;
+    font-size: 1em;
+    color: #6b6b6b;
+
+  }
+}
+
+#wheel-container {
+  margin: 20px auto 0;
+}
+
+.main-content {
+  padding: 20px;
+}
+
+#spin-btn {
+  margin-top: 20px;
+  padding: 10px 30px;
+  border-radius: 10px;
+  border: 2px solid #f83600;
+  background: #f83600;
+  box-shadow: 0 0 10px -1px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: white;
+  &:hover {
+    background: darken(#f83600, 3%);
+  }
+}
+
+.selection-container {
+  padding: 20px;
+  background: #f83600;
+  color: darken(#f83600, 25%);
+  // box-shadow: 0px 0px 10px -1px rgba(0, 0, 0, 0.3);
+  height: 100%;
+  display: inherit;
+  flex-direction: inherit;
+}
+
+#selection {
+  font-size: 3em;
+  font-weight: bold;
+  color: white;
+  min-height: 64px;
+}
+
+.wtf-link {
+  margin-top: auto;
+  cursor: pointer;
+  color: darken(#f83600, 15%);
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@media only screen and (min-width: 480px) {
+  .main-content {
+    padding: 40px 20px;
+  }
+
 }
 
 /* ==========================================================================

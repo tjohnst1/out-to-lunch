@@ -2,8 +2,10 @@ import lunchPlaces from './seedData.js';
 import * as d3 from 'd3';
 
 var pieChart = {
-  width: 300,
-  height: 300,
+  viewboxWidth: 550,
+  viewboxHeight: 550,
+  width: 500,
+  height: 500,
   innerWidth: 20,
   colorScale: d3.scaleOrdinal(d3.schemeCategory20c),
   numberOfItems: lunchPlaces.length,
@@ -14,19 +16,58 @@ pieChart.sliceWidth = 360 / pieChart.numberOfItems;
 
 const svg = d3.select('#wheel-container')
               .append('svg')
-              .attr('width', pieChart.width)
-              .attr('height', pieChart.height);
+              .attr('width', '100%')
+              .attr('height', '100%')
+              .attr('viewBox', '0 0 550 550')
+              .style('max-width', '550px');
+
+const defs = svg.append('defs');
+
+const filter = defs.append('filter')
+                   .attr('id', 'drop-shadow')
+                   .attr('height', '130%');
+
+filter.append("feGaussianBlur")
+      .attr("in", "SourceAlpha")
+      .attr("stdDeviation", 6)
+      .attr("result", "blur");
+
+filter.append("feOffset")
+      .attr("in", "blur")
+      .attr("dx", 0)
+      .attr("dy", 0)
+      .attr("result", "offsetBlur");
+
+filter.append("feFlood")
+    .attr("in", "offsetBlur")
+    .attr("flood-color", "#111111")
+    .attr("flood-opacity", "0.3")
+    .attr("result", "offsetColor");
+
+filter.append("feComposite")
+    .attr("in", "offsetColor")
+    .attr("in2", "offsetBlur")
+    .attr("operator", "in")
+    .attr("result", "offsetBlur");
+
+var feMerge = filter.append("feMerge");
+
+feMerge.append("feMergeNode")
+    .attr("in", "offsetBlur")
+feMerge.append("feMergeNode")
+    .attr("in", "SourceGraphic");
 
 const chartContainer = svg.append('g')
-                          .attr('transform', `translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${pieChart.sliceWidth / 2})`);
+                          .attr('transform', `translate(${pieChart.viewboxWidth / 2}, ${pieChart.viewboxHeight / 2}) rotate(${pieChart.sliceWidth / 2})`)
+                          .style("filter", "url(#drop-shadow)");
 
 const arc = d3.arc()
               .innerRadius(pieChart.innerWidth)
               .outerRadius(pieChart.radius);
 
 const labelArc = d3.arc()
-                   .innerRadius(pieChart.innerWidth + 5)
-                   .outerRadius(pieChart.radius - 5);
+                   .innerRadius(pieChart.innerWidth)
+                   .outerRadius(pieChart.radius);
 
 const pie = d3.pie()
               .value(100 / pieChart.numberOfItems)
@@ -61,9 +102,13 @@ const innerCircle = svg.append('circle')
                        .attr('cx', pieChart.innerWidth)
                        .attr('cy', pieChart.innerWidth)
                        .attr('r', pieChart.innerWidth)
-                       .attr('transform', `translate(${(pieChart.width / 2) - pieChart.innerWidth}, ${(pieChart.height / 2) - pieChart.innerWidth})`)
+                       .attr('transform', `translate(${(pieChart.viewboxWidth / 2) - pieChart.innerWidth}, ${(pieChart.viewboxHeight / 2) - pieChart.innerWidth})`)
                        .style('fill', '#444444')
                        .on('click', randomlySelectAPlace(chartContainer));
+
+
+const spinButton = d3.select('#spin-btn')
+                     .on('click', randomlySelectAPlace(chartContainer))
 
 function randomlySelectAPlace(chart) {
   const numberOfPlaces = pieChart.numberOfItems;
@@ -76,7 +121,7 @@ function randomlySelectAPlace(chart) {
       chart.transition()
       .duration(600)
       .attrTween('transform', function() {
-        return d3.interpolateString(`translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${initialOffset})`, `translate(${pieChart.width / 2}, ${pieChart.height / 2}) rotate(${newOffset})`)
+        return d3.interpolateString(`translate(${pieChart.viewboxWidth / 2}, ${pieChart.viewboxHeight / 2}) rotate(${initialOffset})`, `translate(${pieChart.viewboxWidth / 2}, ${pieChart.viewboxHeight / 2}) rotate(${newOffset})`)
       })
     })(initialOffset)
     initialOffset = newOffset;
@@ -85,13 +130,13 @@ function randomlySelectAPlace(chart) {
 }
 
 function showSelection(offset) {
-  document.getElementById('selection-container').innerHTML = '';
+  document.getElementById('selection').innerHTML = '';
   const selectionIndex = (pieChart.numberOfItems - 1) - (((offset % 360) - (pieChart.sliceWidth / 2)) / pieChart.sliceWidth);
   setTimeout(() => {
     calloutSelection(selectionIndex)
   }, 600)
   setTimeout(() => {
-    document.getElementById('selection-container').innerHTML = lunchPlaces[selectionIndex].name;
+    document.getElementById('selection').innerHTML = lunchPlaces[selectionIndex].name;
   }, 1200)
 }
 
@@ -134,5 +179,5 @@ function LightenDarkenColor(col, amt) {
 }
 
 const triangle = svg.append('path')
-                    .attr('d', `M${pieChart.radius - 20} 0 L${pieChart.radius + 20} 0 L${pieChart.radius} 20 Z`)
-                    .style('fill', "#111111")
+                    .attr('d', `M${(pieChart.viewboxWidth / 2) - 20} 10 L${(pieChart.viewboxWidth / 2) + 20} 10 L${pieChart.viewboxWidth / 2} 30 Z`)
+                    .style('fill', "#444444");

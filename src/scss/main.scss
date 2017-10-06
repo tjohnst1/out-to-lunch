@@ -131,16 +131,25 @@ main {
   }
 }
 
-#wheel-container {
-  margin: 20px auto 0;
+.label {
+  font-size: 12px;
 }
 
-.main-content {
+#wheel-container {
+  margin: 10px auto 0;
+}
+
+#main-content {
   padding: 20px;
+  transition: max-height 300ms;
+  max-height: 3000px;
+  &.active {
+    padding: 0;
+    max-height: 0;
+  }
 }
 
 #spin-btn {
-  margin-top: 20px;
   padding: 10px 30px;
   border-radius: 10px;
   border: 2px solid #f83600;
@@ -156,7 +165,7 @@ main {
   }
 }
 
-.selection-container {
+.details-container {
   padding: 20px;
   background: #f83600;
   color: darken(#f83600, 25%);
@@ -167,26 +176,103 @@ main {
 }
 
 #selection {
-  font-size: 3em;
+  font-size: 2em;
   font-weight: bold;
   color: white;
-  min-height: 64px;
+  min-height: 48px;
 }
 
-.wtf-link {
+#main-content.active  {
+  & ~ .details-container {
+    .selection-container {
+      display: none;
+    }
+    #close-btn {
+      height: 35px;
+      transform: scale(1);
+    }
+  }
+  &.about ~ .details-container .about-container, &.edit ~ .details-container .edit-container {
+    opacity: 1;
+    display: block;
+  }
+}
+
+.about-container, .edit-container {
+  display: none;
+}
+
+.link-container {
   margin-top: auto;
+  text-align: center;
+}
+
+.link {
   cursor: pointer;
   color: darken(#f83600, 15%);
+  display: inline-block;
+  border-left: 1px solid darken(#f83600, 15%);
+  padding-left: 10px;
   &:hover {
     text-decoration: underline;
+  }
+  &:first-of-type {
+    border: 0;
+    padding-left: 0px;
+    padding-right: 10px;
+  }
+}
+
+#close-btn {
+  width: 35px;
+  height: 0;
+  position: relative;
+  display: flex;
+  margin-left: auto;
+  transform: scale(0);
+  transition: transform 300ms;
+  transition-delay: 300ms;
+  cursor: pointer;
+  &:before {
+    content: '';
+    height: 3px;
+    width: 35px;
+    background: darken(#f83600, 15%);
+    display: block;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%) rotate(45deg);
+    position: absolute;
+  }
+  &:after {
+    content: '';
+    height: 3px;
+    width: 35px;
+    background: darken(#f83600, 15%);
+    display: block;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%) rotate(-45deg);
+    position: absolute;
+  }
+}
+
+.option-input {
+  margin-top: 20px;
+  width: 100%;
+  label, input {
+    display: inline-block;
+  }
+  label {
+    width: 30px;
   }
 }
 
 @media only screen and (min-width: 480px) {
-  .main-content {
-    padding: 40px 20px;
+  #selection {
+    font-size: 3em;
+    min-height: 64px;
   }
-
 }
 
 /* ==========================================================================

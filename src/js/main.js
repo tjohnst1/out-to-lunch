@@ -2,10 +2,10 @@ import lunchPlaces from './seedData.js';
 import * as d3 from 'd3';
 
 var pieChart = {
-  viewboxWidth: 550,
-  viewboxHeight: 550,
-  width: 500,
-  height: 500,
+  viewboxWidth: 375,
+  viewboxHeight: 375,
+  width: 325,
+  height: 325,
   innerWidth: 20,
   colorScale: d3.scaleOrdinal(d3.schemeCategory20c),
   numberOfItems: lunchPlaces.length,
@@ -18,8 +18,8 @@ const svg = d3.select('#wheel-container')
               .append('svg')
               .attr('width', '100%')
               .attr('height', '100%')
-              .attr('viewBox', '0 0 550 550')
-              .style('max-width', '550px');
+              .attr('viewBox', '0 0 375 375')
+              .style('max-width', '375px');
 
 const defs = svg.append('defs');
 
@@ -91,6 +91,7 @@ const sliceText = slice.append('text')
                        .text((d, i) => {
                          return d.data.name;
                        })
+                       .attr("class", "label")
                        .attr("transform", function(d) {
                          var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
                          return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
@@ -181,3 +182,18 @@ function LightenDarkenColor(col, amt) {
 const triangle = svg.append('path')
                     .attr('d', `M${(pieChart.viewboxWidth / 2) - 20} 10 L${(pieChart.viewboxWidth / 2) + 20} 10 L${pieChart.viewboxWidth / 2} 30 Z`)
                     .style('fill', "#444444");
+
+
+document.getElementById('about-link').onclick = () => {
+  document.getElementById('main-content').classList.add('active');
+  document.getElementById('main-content').classList.toggle('about');
+}
+
+document.getElementById('edit-link').onclick = () => {
+  document.getElementById('main-content').classList.add('active');
+  document.getElementById('main-content').classList.toggle('edit');
+}
+
+document.getElementById('close-btn').onclick = () => {
+  document.getElementById('main-content').classList.remove('active', 'about', 'edit');
+}

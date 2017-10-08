@@ -15,101 +15,101 @@ pieChart.radius = pieChart.width / 2;
 pieChart.sliceWidth = 360 / pieChart.numberOfItems;
 
 const svg = d3.select('#wheel-container')
-              .append('svg')
-              .attr('width', '100%')
-              .attr('height', '100%')
-              .attr('viewBox', '0 0 375 375')
-              .style('max-width', '375px');
+  .append('svg')
+  .attr('width', '100%')
+  .attr('height', '100%')
+  .attr('viewBox', '0 0 375 375')
+  .style('max-width', '375px');
 
 const defs = svg.append('defs');
 
 const filter = defs.append('filter')
-                   .attr('id', 'drop-shadow')
-                   .attr('height', '130%');
+  .attr('id', 'drop-shadow')
+  .attr('height', '130%');
 
+// drop shadow styles //
 filter.append("feGaussianBlur")
-      .attr("in", "SourceAlpha")
-      .attr("stdDeviation", 6)
-      .attr("result", "blur");
+  .attr("in", "SourceAlpha")
+  .attr("stdDeviation", 6)
+  .attr("result", "blur");
 
 filter.append("feOffset")
-      .attr("in", "blur")
-      .attr("dx", 0)
-      .attr("dy", 0)
-      .attr("result", "offsetBlur");
+  .attr("in", "blur")
+  .attr("dx", 0)
+  .attr("dy", 0)
+  .attr("result", "offsetBlur");
 
 filter.append("feFlood")
-    .attr("in", "offsetBlur")
-    .attr("flood-color", "#111111")
-    .attr("flood-opacity", "0.3")
-    .attr("result", "offsetColor");
+  .attr("in", "offsetBlur")
+  .attr("flood-color", "#111111")
+  .attr("flood-opacity", "0.3")
+  .attr("result", "offsetColor");
 
 filter.append("feComposite")
-    .attr("in", "offsetColor")
-    .attr("in2", "offsetBlur")
-    .attr("operator", "in")
-    .attr("result", "offsetBlur");
+  .attr("in", "offsetColor")
+  .attr("in2", "offsetBlur")
+  .attr("operator", "in")
+  .attr("result", "offsetBlur");
 
 var feMerge = filter.append("feMerge");
 
 feMerge.append("feMergeNode")
-    .attr("in", "offsetBlur")
+  .attr("in", "offsetBlur")
 feMerge.append("feMergeNode")
-    .attr("in", "SourceGraphic");
+  .attr("in", "SourceGraphic");
 
 const chartContainer = svg.append('g')
-                          .attr('transform', `translate(${pieChart.viewboxWidth / 2}, ${pieChart.viewboxHeight / 2}) rotate(${pieChart.sliceWidth / 2})`)
-                          .style("filter", "url(#drop-shadow)");
+  .attr('transform', `translate(${pieChart.viewboxWidth / 2}, ${pieChart.viewboxHeight / 2}) rotate(${pieChart.sliceWidth / 2})`)
+  .style("filter", "url(#drop-shadow)");
 
 const arc = d3.arc()
-              .innerRadius(pieChart.innerWidth)
-              .outerRadius(pieChart.radius);
+  .innerRadius(pieChart.innerWidth)
+  .outerRadius(pieChart.radius);
 
 const labelArc = d3.arc()
-                   .innerRadius(pieChart.innerWidth)
-                   .outerRadius(pieChart.radius);
+  .innerRadius(pieChart.innerWidth)
+  .outerRadius(pieChart.radius);
 
 const pie = d3.pie()
-              .value(100 / pieChart.numberOfItems)
-              .sort(null);
+  .value(100 / pieChart.numberOfItems)
+  .sort(null);
 
 const slice = chartContainer.selectAll('path')
-                            .data(pie(lunchPlaces))
-                            .enter()
-                            .append('g')
-                            .attr('id', (d, i) => {
-                              return `slice-${i}`;
-                            })
+  .data(pie(lunchPlaces))
+  .enter()
+  .append('g')
+  .attr('id', (d, i) => {
+    return `slice-${i}`;
+  });
 
 const sliceBg = slice.append('path')
-                     .attr('d', arc)
-                     .attr('fill', (d, i) => {
-                       return pieChart.colorScale(i);
-                     })
+  .attr('d', arc)
+  .attr('fill', (d, i) => {
+    return pieChart.colorScale(i);
+  });
 
 const sliceText = slice.append('text')
-                       .text((d, i) => {
-                         return d.data.name;
-                       })
-                       .attr("class", "label")
-                       .attr("transform", function(d) {
-                         var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
-                         return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
-                       })
-                       .attr("dy", ".35em")
-                       .attr('text-anchor','middle')
+  .text((d, i) => {
+    return d.data.name;
+  })
+  .attr("class", "label")
+  .attr("transform", function(d) {
+    var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
+    return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
+  })
+  .attr("dy", ".35em")
+  .attr('text-anchor','middle')
 
 const innerCircle = svg.append('circle')
-                       .attr('cx', pieChart.innerWidth)
-                       .attr('cy', pieChart.innerWidth)
-                       .attr('r', pieChart.innerWidth)
-                       .attr('transform', `translate(${(pieChart.viewboxWidth / 2) - pieChart.innerWidth}, ${(pieChart.viewboxHeight / 2) - pieChart.innerWidth})`)
-                       .style('fill', '#444444')
-                       .on('click', randomlySelectAPlace(chartContainer));
-
+  .attr('cx', pieChart.innerWidth)
+  .attr('cy', pieChart.innerWidth)
+  .attr('r', pieChart.innerWidth)
+  .attr('transform', `translate(${(pieChart.viewboxWidth / 2) - pieChart.innerWidth}, ${(pieChart.viewboxHeight / 2) - pieChart.innerWidth})`)
+  .style('fill', '#444444')
+  .on('click', randomlySelectAPlace(chartContainer));
 
 const spinButton = d3.select('#spin-btn')
-                     .on('click', randomlySelectAPlace(chartContainer))
+  .on('click', randomlySelectAPlace(chartContainer))
 
 function randomlySelectAPlace(chart) {
   const numberOfPlaces = pieChart.numberOfItems;
@@ -189,7 +189,8 @@ const elements = {
   aboutLink: document.getElementById('about-link'),
   editLink: document.getElementById('edit-link'),
   closeBtn: document.getElementById('close-btn'),
-  addBtn: document.getElementById('add-btn')
+  addBtn: document.getElementById('add-btn'),
+  selectionInputs: document.getElementById('selection-input'),
 }
 
 elements.aboutLink.onclick = () => {
@@ -222,8 +223,10 @@ function createInputRow(place, inputCount) {
   inputLabel.innerHTML = inputCount;
   const input = document.createElement('input');
   input.setAttribute('type', 'text');
+  input.setAttribute('data-input-id', place.id)
   input.classList.add('selection-input');
   input.value = place.name;
+  addInputListener(input, place);
   const removeButton = document.createElement('button');
   removeButton.setAttribute('type', 'button');
   removeButton.innerHTML = '-';
@@ -234,11 +237,16 @@ function createInputRow(place, inputCount) {
   return inputRow;
 }
 
-createInputRows(lunchPlaces);
+function addInputListener(inputEle, place) {
+  inputEle.onkeyup = (e) => {
+    lunchPlaces[place.id].name = e.target.value;
+    updateChartText();
+  }
+}
 
-// elements.addBtn.onclick = () => {
-//   let currentCount = 1;
-//   const inputRow = document.createElement('div').classList.add('option-input');
-//   inputRow.append(document.createElement('label').html = )
-//   elements.editContainer.append()
-// }
+function updateChartText() {
+  sliceText.data(lunchPlaces)
+  .text((d, i) => d.name);
+}
+
+createInputRows(lunchPlaces);

@@ -183,17 +183,62 @@ const triangle = svg.append('path')
                     .attr('d', `M${(pieChart.viewboxWidth / 2) - 20} 10 L${(pieChart.viewboxWidth / 2) + 20} 10 L${pieChart.viewboxWidth / 2} 30 Z`)
                     .style('fill', "#444444");
 
-
-document.getElementById('about-link').onclick = () => {
-  document.getElementById('main-content').classList.add('active');
-  document.getElementById('main-content').classList.toggle('about');
+const elements = {
+  mainContent: document.getElementById('main-content'),
+  inputContainer: document.getElementById('input-container'),
+  aboutLink: document.getElementById('about-link'),
+  editLink: document.getElementById('edit-link'),
+  closeBtn: document.getElementById('close-btn'),
+  addBtn: document.getElementById('add-btn')
 }
 
-document.getElementById('edit-link').onclick = () => {
-  document.getElementById('main-content').classList.add('active');
-  document.getElementById('main-content').classList.toggle('edit');
+elements.aboutLink.onclick = () => {
+  elements.mainContent.classList.add('active');
+  elements.mainContent.classList.toggle('about');
 }
 
-document.getElementById('close-btn').onclick = () => {
-  document.getElementById('main-content').classList.remove('active', 'about', 'edit');
+elements.editLink.onclick = () => {
+  elements.mainContent.classList.add('active');
+  elements.mainContent.classList.toggle('edit');
 }
+
+elements.closeBtn.onclick = () => {
+  elements.mainContent.classList.remove('active', 'about', 'edit');
+}
+
+function createInputRows(data) {
+  data.map((place, i) => {
+    return createInputRow(place, i + 1);
+  })
+  .forEach((inputEle) => {
+    return elements.inputContainer.appendChild(inputEle);
+  });
+}
+
+function createInputRow(place, inputCount) {
+  const inputRow = document.createElement('div')
+  inputRow.classList.add('option-input');
+  const inputLabel = document.createElement('label')
+  inputLabel.innerHTML = inputCount;
+  const input = document.createElement('input');
+  input.setAttribute('type', 'text');
+  input.classList.add('selection-input');
+  input.value = place.name;
+  const removeButton = document.createElement('button');
+  removeButton.setAttribute('type', 'button');
+  removeButton.innerHTML = '-';
+  removeButton.classList.add('remove-btn');
+  inputRow.appendChild(inputLabel);
+  inputRow.appendChild(input);
+  inputRow.appendChild(removeButton);
+  return inputRow;
+}
+
+createInputRows(lunchPlaces);
+
+// elements.addBtn.onclick = () => {
+//   let currentCount = 1;
+//   const inputRow = document.createElement('div').classList.add('option-input');
+//   inputRow.append(document.createElement('label').html = )
+//   elements.editContainer.append()
+// }

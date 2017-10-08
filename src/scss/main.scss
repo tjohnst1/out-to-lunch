@@ -98,12 +98,15 @@ textarea {
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
+$red: #f83600;
+$dark-red: darken(#f83600, 20%);
+$dark-grey: #111111;
 
 html {
   box-sizing: border-box;
   height: 100%;
   font-family: 'Montserrat', Helvetica, sans-serif;
-  color: #111111;
+  color: $dark-grey;
 }
 
 *, *:before, *:after {
@@ -152,8 +155,8 @@ main {
 #spin-btn {
   padding: 10px 30px;
   border-radius: 10px;
-  border: 2px solid #f83600;
-  background: #f83600;
+  border: 2px solid $red;
+  background: $red;
   box-shadow: 0 0 10px -1px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   font-size: 0.8em;
@@ -161,15 +164,14 @@ main {
   font-weight: 600;
   color: white;
   &:hover {
-    background: darken(#f83600, 3%);
+    background: darken($red, 3%);
   }
 }
 
 .details-container {
   padding: 20px;
-  background: #f83600;
-  color: darken(#f83600, 25%);
-  // box-shadow: 0px 0px 10px -1px rgba(0, 0, 0, 0.3);
+  background: $red;
+  color: $dark-red;
   height: 100%;
   display: inherit;
   flex-direction: inherit;
@@ -209,9 +211,9 @@ main {
 
 .link {
   cursor: pointer;
-  color: darken(#f83600, 15%);
+  color: $dark-red;
   display: inline-block;
-  border-left: 1px solid darken(#f83600, 15%);
+  border-left: 1px solid $dark-red;
   padding-left: 10px;
   &:hover {
     text-decoration: underline;
@@ -237,7 +239,7 @@ main {
     content: '';
     height: 3px;
     width: 35px;
-    background: darken(#f83600, 15%);
+    background: $dark-red;
     display: block;
     top: 50%;
     left: 0;
@@ -248,7 +250,7 @@ main {
     content: '';
     height: 3px;
     width: 35px;
-    background: darken(#f83600, 15%);
+    background: $dark-red;
     display: block;
     top: 50%;
     left: 0;
@@ -258,14 +260,43 @@ main {
 }
 
 .option-input {
-  margin-top: 20px;
-  width: 100%;
+  width: 80%;
+  margin: 20px auto 0;
   label, input {
     display: inline-block;
+  }
+  input {
+    width: 80%;
+    border: 0;
+    // border: 2px solid $dark-red;
+    padding: 3px 10px;
+    background: #eeeeee;
   }
   label {
     width: 30px;
   }
+}
+
+.remove-btn {
+  padding: 1px 7px;
+  border-radius: 50%;
+  background: $dark-red;
+  border: 0;
+  cursor: pointer;
+  color: $red;
+  margin: 0 0 0 10px;
+}
+
+#add-btn {
+  padding: 5px 10px;
+  margin-top: 20px;
+  border-radius: 7px;
+  border: 0;
+  background: #fefefe;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: $dark-grey;
+  cursor: pointer;
 }
 
 @media only screen and (min-width: 480px) {

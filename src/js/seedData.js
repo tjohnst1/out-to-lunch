@@ -1,4 +1,4 @@
-const lunchPlaces = [
+const selectedPlaces = [
   {
     id: 0,
     name: "Providore",

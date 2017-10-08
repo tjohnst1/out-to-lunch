@@ -1,4 +1,4 @@
-import lunchPlaces from './seedData.js';
+import selectedPlaces from './seedData.js';
 import * as d3 from 'd3';
 
 var pieChart = {
@@ -8,7 +8,7 @@ var pieChart = {
   height: 325,
   innerWidth: 20,
   colorScale: d3.scaleOrdinal(d3.schemeCategory20c),
-  numberOfItems: lunchPlaces.length,
+  numberOfItems: selectedPlaces.length,
 };
 
 pieChart.radius = pieChart.width / 2;
@@ -75,7 +75,7 @@ const pie = d3.pie()
   .sort(null);
 
 const slice = chartContainer.selectAll('path')
-  .data(pie(lunchPlaces))
+  .data(pie(selectedPlaces))
   .enter()
   .append('g')
   .attr('id', (d, i) => {
@@ -137,7 +137,7 @@ function showSelection(offset) {
     calloutSelection(selectionIndex)
   }, 600)
   setTimeout(() => {
-    document.getElementById('selection').innerHTML = lunchPlaces[selectionIndex].name;
+    document.getElementById('selection').innerHTML = selectedPlaces[selectionIndex].name;
   }, 1200)
 }
 
@@ -239,14 +239,14 @@ function createInputRow(place, inputCount) {
 
 function addInputListener(inputEle, place) {
   inputEle.onkeyup = (e) => {
-    lunchPlaces[place.id].name = e.target.value;
+    selectedPlaces[place.id].name = e.target.value;
     updateChartText();
   }
 }
 
 function updateChartText() {
-  sliceText.data(lunchPlaces)
+  sliceText.data(selectedPlaces)
   .text((d, i) => d.name);
 }
 
-createInputRows(lunchPlaces);
+createInputRows(selectedPlaces);

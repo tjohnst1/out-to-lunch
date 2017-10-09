@@ -258,6 +258,7 @@ function addRemoveSelectionListener(buttonEle, inputRow, dataToRemove) {
     state = Object.assign({}, state, {
       selectedPlaces: state.selectedPlaces.filter(place => place.id !== dataToRemove.id),
     })
+    reorderInputElements();
     redrawChart();
   }
 }
@@ -283,6 +284,12 @@ function redrawChart() {
   chartContainer.attr('transform', `translate(${state.pieChart.viewboxWidth / 2}, ${state.pieChart.viewboxHeight / 2}) rotate(${state.pieChart.sliceWidth() / 2})`);
 
   gs.exit().remove();
+}
+
+function reorderInputElements() {
+  Array.from(document.getElementsByClassName('option-input'), (ele, i) => {
+    ele.firstChild.innerHTML = (i + 1).toString();
+  })
 }
 
 function resetRotationalOffset() {

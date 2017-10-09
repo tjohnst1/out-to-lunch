@@ -3,20 +3,20 @@ import * as d3 from 'd3';
 
 let state = {
   selectedPlaces: selectedPlaces,
+  pieChart: {
+    viewboxWidth: 375,
+    viewboxHeight: 375,
+    width: 325,
+    height: 325,
+    innerWidth: 20,
+    colorScale: d3.scaleOrdinal(d3.schemeCategory20c),
+    numberOfItems: () => state.selectedPlaces.length,
+  }
 }
 
-var pieChart = {
-  viewboxWidth: 375,
-  viewboxHeight: 375,
-  width: 325,
-  height: 325,
-  innerWidth: 20,
-  colorScale: d3.scaleOrdinal(d3.schemeCategory20c),
-  numberOfItems: state.selectedPlaces.length,
-};
-
-pieChart.radius = pieChart.width / 2;
-pieChart.sliceWidth = 360 / pieChart.numberOfItems;
+state.pieChart.radius = state.pieChart.width / 2;
+state.pieChart.sliceWidth = () => 360 / state.pieChart.numberOfItems();
+state.pieChart.rotationOffset = state.pieChart.sliceWidth() / 2;
 
 const svg = d3.select('#wheel-container')
   .append('svg')
@@ -63,20 +63,14 @@ feMerge.append("feMergeNode")
   .attr("in", "SourceGraphic");
 
 const chartContainer = svg.append('g')
-  .attr('transform', `translate(${pieChart.viewboxWidth / 2}, ${pieChart.viewboxHeight / 2}) rotate(${pieChart.sliceWidth / 2})`)
+  .attr('transform', `translate(${state.pieChart.viewboxWidth / 2}, ${state.pieChart.viewboxHeight / 2}) rotate(${state.pieChart.sliceWidth() / 2})`)
   .style("filter", "url(#drop-shadow)");
 
 const arc = d3.arc()
-  .innerRadius(pieChart.innerWidth)
-  .outerRadius(pieChart.radius);
+  .innerRadius(state.pieChart.innerWidth)
+  .outerRadius(state.pieChart.radius);
 
-const labelArc = d3.arc()
-  .innerRadius(pieChart.innerWidth)
-  .outerRadius(pieChart.radius);
-
-const pie = d3.pie()
-  .value(100)
-  // .sort(null)
+const pie = d3.pie().value(100);
 
 const slice = chartContainer.selectAll('path')
   .data(pie(state.selectedPlaces))
@@ -89,7 +83,7 @@ const slice = chartContainer.selectAll('path')
 const sliceBg = slice.append('path')
   .attr('d', arc)
   .attr('fill', (d, i) => {
-    return pieChart.colorScale(i);
+    return state.pieChart.colorScale(i);
   });
 
 const sliceText = slice.append('text')
@@ -99,16 +93,16 @@ const sliceText = slice.append('text')
   .attr("class", "label")
   .attr("transform", function(d) {
     var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
-    return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
+    return "translate(" + arc.centroid(d)[0] + "," + arc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
   })
   .attr("dy", ".35em")
   .attr('text-anchor','middle')
 
 const innerCircle = svg.append('circle')
-  .attr('cx', pieChart.innerWidth)
-  .attr('cy', pieChart.innerWidth)
-  .attr('r', pieChart.innerWidth)
-  .attr('transform', `translate(${(pieChart.viewboxWidth / 2) - pieChart.innerWidth}, ${(pieChart.viewboxHeight / 2) - pieChart.innerWidth})`)
+  .attr('cx', state.pieChart.innerWidth)
+  .attr('cy', state.pieChart.innerWidth)
+  .attr('r', state.pieChart.innerWidth)
+  .attr('transform', `translate(${(state.pieChart.viewboxWidth / 2) - state.pieChart.innerWidth}, ${(state.pieChart.viewboxHeight / 2) - state.pieChart.innerWidth})`)
   .style('fill', '#444444')
   .on('click', randomlySelectAPlace(chartContainer));
 
@@ -116,27 +110,26 @@ const spinButton = d3.select('#spin-btn')
   .on('click', randomlySelectAPlace(chartContainer))
 
 function randomlySelectAPlace(chart) {
-  const numberOfPlaces = pieChart.numberOfItems;
-  let initialOffset = (pieChart.sliceWidth / 2);
   return () => {
-    const randomItemIndex = Math.floor(Math.random() * pieChart.numberOfItems);
-    const randomPlaceOffset = randomItemIndex * pieChart.sliceWidth
-    const newOffset = initialOffset + randomPlaceOffset + 720;
-    (function(initialOffset) {
-      chart.transition()
-      .duration(600)
-      .attrTween('transform', function() {
-        return d3.interpolateString(`translate(${pieChart.viewboxWidth / 2}, ${pieChart.viewboxHeight / 2}) rotate(${initialOffset})`, `translate(${pieChart.viewboxWidth / 2}, ${pieChart.viewboxHeight / 2}) rotate(${newOffset})`)
-      })
-    })(initialOffset)
-    initialOffset = newOffset;
-    showSelection(newOffset)
+    const randomItemIndex = Math.floor(Math.random() * state.pieChart.numberOfItems());
+    const randomPlaceRotationOffset = Math.floor(randomItemIndex * state.pieChart.sliceWidth());
+    const newOffset = state.pieChart.rotationOffset + randomPlaceRotationOffset + 720;
+
+    chart.transition().duration(600)
+    .attrTween('transform', function() {
+      console.log(`translate(${state.pieChart.viewboxWidth / 2}, ${state.pieChart.viewboxHeight / 2}) rotate(${state.pieChart.rotationOffset})`, `translate(${state.pieChart.viewboxWidth / 2}, ${state.pieChart.viewboxHeight / 2}) rotate(${newOffset})`)
+      return d3.interpolateString(`translate(${state.pieChart.viewboxWidth / 2}, ${state.pieChart.viewboxHeight / 2}) rotate(${state.pieChart.rotationOffset})`, `translate(${state.pieChart.viewboxWidth / 2}, ${state.pieChart.viewboxHeight / 2}) rotate(${newOffset})`)
+    })
+    .on('end', function() {
+      state.pieChart.rotationOffset = newOffset;
+      showSelection(newOffset);
+    });
   };
 }
 
 function showSelection(offset) {
   document.getElementById('selection').innerHTML = '';
-  const selectionIndex = (pieChart.numberOfItems - 1) - (((offset % 360) - (pieChart.sliceWidth / 2)) / pieChart.sliceWidth);
+  const selectionIndex = Math.floor((state.pieChart.numberOfItems() - 1) - (((offset % 360) - (state.pieChart.sliceWidth() / 2)) / state.pieChart.sliceWidth()));
   setTimeout(() => {
     calloutSelection(selectionIndex)
   }, 600)
@@ -184,7 +177,7 @@ function LightenDarkenColor(col, amt) {
 }
 
 const triangle = svg.append('path')
-                    .attr('d', `M${(pieChart.viewboxWidth / 2) - 20} 10 L${(pieChart.viewboxWidth / 2) + 20} 10 L${pieChart.viewboxWidth / 2} 30 Z`)
+                    .attr('d', `M${(state.pieChart.viewboxWidth / 2) - 20} 10 L${(state.pieChart.viewboxWidth / 2) + 20} 10 L${state.pieChart.viewboxWidth / 2} 30 Z`)
                     .style('fill', "#444444");
 
 const elements = {
@@ -276,13 +269,24 @@ function updateChartText() {
 
 function redrawChart() {
   const gs = chartContainer.selectAll('g').data(pie(state.selectedPlaces));
-  gs.select('path').attr('d', arc);
-  gs.select('text').attr("transform", function(d) {
-    var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
-    return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
-  });
+  gs.select('path').attr('d', arc)
+  gs.select('text')
+    .text((d, i) => {
+      return d.data.name;
+    })
+    .attr("transform", function(d) {
+      var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
+      return "translate(" + arc.centroid(d)[0] + "," + arc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
+    });
+
+  resetRotationalOffset();
+  chartContainer.attr('transform', `translate(${state.pieChart.viewboxWidth / 2}, ${state.pieChart.viewboxHeight / 2}) rotate(${state.pieChart.sliceWidth() / 2})`);
 
   gs.exit().remove();
+}
+
+function resetRotationalOffset() {
+  state.pieChart.rotationOffset = state.pieChart.sliceWidth() / 2;
 }
 
 createInputs(state.selectedPlaces);

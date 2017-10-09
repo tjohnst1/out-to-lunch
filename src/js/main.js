@@ -1,6 +1,10 @@
 import selectedPlaces from './seedData.js';
 import * as d3 from 'd3';
 
+let state = {
+  selectedPlaces: selectedPlaces,
+}
+
 var pieChart = {
   viewboxWidth: 375,
   viewboxHeight: 375,
@@ -8,7 +12,7 @@ var pieChart = {
   height: 325,
   innerWidth: 20,
   colorScale: d3.scaleOrdinal(d3.schemeCategory20c),
-  numberOfItems: selectedPlaces.length,
+  numberOfItems: state.selectedPlaces.length,
 };
 
 pieChart.radius = pieChart.width / 2;
@@ -71,11 +75,11 @@ const labelArc = d3.arc()
   .outerRadius(pieChart.radius);
 
 const pie = d3.pie()
-  .value(100 / pieChart.numberOfItems)
-  .sort(null);
+  .value(100)
+  // .sort(null)
 
 const slice = chartContainer.selectAll('path')
-  .data(pie(selectedPlaces))
+  .data(pie(state.selectedPlaces))
   .enter()
   .append('g')
   .attr('id', (d, i) => {
@@ -137,7 +141,7 @@ function showSelection(offset) {
     calloutSelection(selectionIndex)
   }, 600)
   setTimeout(() => {
-    document.getElementById('selection').innerHTML = selectedPlaces[selectionIndex].name;
+    document.getElementById('selection').innerHTML = state.selectedPlaces[selectionIndex].name;
   }, 1200)
 }
 
@@ -191,7 +195,7 @@ const elements = {
   closeBtn: document.getElementById('close-btn'),
   addBtn: document.getElementById('add-btn'),
   selectionInputs: document.getElementById('selection-input'),
-}
+};
 
 elements.aboutLink.onclick = () => {
   elements.mainContent.classList.add('active');
@@ -207,7 +211,7 @@ elements.closeBtn.onclick = () => {
   elements.mainContent.classList.remove('active', 'about', 'edit');
 }
 
-function createInputRows(data) {
+function createInputs(data) {
   data.map((place, i) => {
     return createInputRow(place, i + 1);
   })
@@ -226,7 +230,6 @@ function createInputRow(place, inputCount) {
   input.setAttribute('data-input-id', place.id)
   input.classList.add('selection-input');
   input.value = place.name;
-  addInputListener(input, place);
   const removeButton = document.createElement('button');
   removeButton.setAttribute('type', 'button');
   removeButton.innerHTML = '-';
@@ -234,19 +237,52 @@ function createInputRow(place, inputCount) {
   inputRow.appendChild(inputLabel);
   inputRow.appendChild(input);
   inputRow.appendChild(removeButton);
+  addEditSelectionListener(input, place);
+  addRemoveSelectionListener(removeButton, inputRow, place);
   return inputRow;
 }
 
-function addInputListener(inputEle, place) {
+function addEditSelectionListener(inputEle, placeData) {
   inputEle.onkeyup = (e) => {
-    selectedPlaces[place.id].name = e.target.value;
+    state = Object.assign({}, state, {
+      selectedPlaces: state.selectedPlaces.map(place => {
+        if (place.id === placeData.id) {
+          return {
+            name: e.target.value,
+            id: placeData.id,
+          }
+        }
+        return place;
+      })
+    });
     updateChartText();
   }
 }
 
-function updateChartText() {
-  sliceText.data(selectedPlaces)
-  .text((d, i) => d.name);
+function addRemoveSelectionListener(buttonEle, inputRow, dataToRemove) {
+  buttonEle.onclick = () => {
+    elements.inputContainer.removeChild(inputRow);
+    state = Object.assign({}, state, {
+      selectedPlaces: state.selectedPlaces.filter(place => place.id !== dataToRemove.id),
+    })
+    redrawChart();
+  }
 }
 
-createInputRows(selectedPlaces);
+function updateChartText() {
+  return sliceText.data(state.selectedPlaces)
+    .text((d, i) => d.name);
+}
+
+function redrawChart() {
+  const gs = chartContainer.selectAll('g').data(pie(state.selectedPlaces));
+  gs.select('path').attr('d', arc);
+  gs.select('text').attr("transform", function(d) {
+    var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
+    return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
+  });
+
+  gs.exit().remove();
+}
+
+createInputs(state.selectedPlaces);

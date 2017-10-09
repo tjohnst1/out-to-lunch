@@ -1,4 +1,4 @@
-const selectedPlaces = [
+module.exports = [
   {
     id: 0,
     name: "Providore",
@@ -36,5 +36,3 @@ const selectedPlaces = [
     name: "ChickPeaDX",
   },
 ]
-
-export default lunchPlaces;

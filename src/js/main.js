@@ -259,7 +259,21 @@ function addRemoveSelectionListener(buttonEle, inputRow, dataToRemove) {
       selectedPlaces: state.selectedPlaces.filter(place => place.id !== dataToRemove.id),
     })
     reorderInputElements();
+    addAddToSelectionButton();
     redrawChart();
+  }
+}
+
+function addAddToSelectionButton() {
+  const addBtn = document.createElement('button');
+  addBtn.setAttribute('type', 'button');
+  addBtn.id = 'add-btn';
+  addBtn.innerHTML = 'Add';
+  addBtn.onclick = () => {
+    createInputRow({name: '', id: state.selectedPlaces.length}, state.selectedPlaces.length)
+  }
+  if (!document.getElementById('add-btn')) {
+    document.getElementById('edit-container').appendChild(addBtn);
   }
 }
 

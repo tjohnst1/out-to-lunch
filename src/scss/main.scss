@@ -194,13 +194,13 @@ main {
       transform: scale(1);
     }
   }
-  &.about ~ .details-container .about-container, &.edit ~ .details-container .edit-container {
+  &.about ~ .details-container .about-container, &.edit ~ .details-container #edit-container {
     opacity: 1;
     display: block;
   }
 }
 
-.about-container, .edit-container {
+.about-container, #edit-container {
   display: none;
 }
 

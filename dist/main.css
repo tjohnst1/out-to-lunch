@@ -1,4 +1,4 @@
-/*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */
+@import url(https://fonts.googleapis.com/css?family=Montserrat);/*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */
 /* Document
    ========================================================================== */
 /**
@@ -399,7 +399,6 @@ template {
    Base styles: opinionated defaults
    ========================================================================== */
 html {
-  color: #222;
   font-size: 1em;
   line-height: 1.4; }
 
@@ -470,8 +469,173 @@ textarea {
 /* ==========================================================================
    Author's custom styles
    ========================================================================== */
+html {
+  box-sizing: border-box;
+  height: 100%;
+  font-family: 'Montserrat', Helvetica, sans-serif;
+  color: #111111; }
+
+*, *:before, *:after {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0; }
+
+body, main {
+  height: 100%;
+  width: 100%;
+  overflow: auto; }
+
 main {
-  padding: 50px; }
+  text-align: center;
+  background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  display: flex;
+  flex-direction: column; }
+  main h1 {
+    margin: 0;
+    font-size: 1em;
+    color: #6b6b6b; }
+
+.label {
+  font-size: 12px; }
+
+#wheel-container {
+  margin: 10px auto 0; }
+
+#main-content {
+  padding: 20px;
+  transition: max-height 300ms;
+  max-height: 3000px; }
+  #main-content.active {
+    padding: 0;
+    max-height: 0; }
+
+#spin-btn {
+  padding: 10px 30px;
+  border-radius: 10px;
+  border: 2px solid #f83600;
+  background: #f83600;
+  box-shadow: 0 0 10px -1px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: white; }
+  #spin-btn:hover {
+    background: #e93300; }
+
+.details-container {
+  padding: 20px;
+  background: #f83600;
+  color: #922000;
+  height: 100%;
+  display: inherit;
+  flex-direction: inherit; }
+
+#selection {
+  font-size: 2em;
+  font-weight: bold;
+  color: white;
+  min-height: 48px; }
+
+#main-content.active ~ .details-container .selection-container {
+  display: none; }
+
+#main-content.active ~ .details-container #close-btn {
+  height: 35px;
+  transform: scale(1); }
+
+#main-content.active.about ~ .details-container .about-container, #main-content.active.edit ~ .details-container #edit-container {
+  opacity: 1;
+  display: block; }
+
+.about-container, #edit-container {
+  display: none; }
+
+.link-container {
+  margin-top: auto;
+  text-align: center; }
+
+.link {
+  cursor: pointer;
+  color: #922000;
+  display: inline-block;
+  border-left: 1px solid #922000;
+  padding-left: 10px; }
+  .link:hover {
+    text-decoration: underline; }
+  .link:first-of-type {
+    border: 0;
+    padding-left: 0px;
+    padding-right: 10px; }
+
+#close-btn {
+  width: 35px;
+  height: 0;
+  position: relative;
+  display: flex;
+  margin-left: auto;
+  transform: scale(0);
+  transition: transform 300ms;
+  transition-delay: 300ms;
+  cursor: pointer; }
+  #close-btn:before {
+    content: '';
+    height: 3px;
+    width: 35px;
+    background: #922000;
+    display: block;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%) rotate(45deg);
+    position: absolute; }
+  #close-btn:after {
+    content: '';
+    height: 3px;
+    width: 35px;
+    background: #922000;
+    display: block;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%) rotate(-45deg);
+    position: absolute; }
+
+.option-input {
+  width: 80%;
+  margin: 20px auto 0; }
+  .option-input label, .option-input input {
+    display: inline-block; }
+  .option-input input {
+    width: 80%;
+    border: 0;
+    padding: 3px 10px;
+    background: #eeeeee; }
+  .option-input label {
+    width: 30px; }
+
+.remove-btn {
+  padding: 1px 7px;
+  border-radius: 50%;
+  background: #922000;
+  border: 0;
+  cursor: pointer;
+  color: #f83600;
+  margin: 0 0 0 10px; }
+
+#add-btn {
+  padding: 5px 10px;
+  margin-top: 20px;
+  border-radius: 7px;
+  border: 0;
+  background: #fefefe;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #111111;
+  cursor: pointer; }
+
+@media only screen and (min-width: 480px) {
+  #selection {
+    font-size: 3em;
+    min-height: 64px; } }
 
 /* ==========================================================================
    Helper classes

@@ -46,10 +46,8 @@ export class PieChart {
   }
 
   draw() {
-    // clears the chart for a redraw (in the case that the user modified the entries)
-    if (document.getElementById(this.elementId)) {
-      document.getElementById(this.elementId).innerHTML = '';
-    }
+    // clears the chart for a redraw (in the case the chart is already on screen and the user modified the entries)
+    document.getElementById(this.elementId).innerHTML = '';
 
     const svg = this.createBoundingBox();
     this.createDropShadow(svg);

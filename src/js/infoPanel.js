@@ -38,14 +38,14 @@ function createInputRow(place, inputCount, pieChart) {
   inputRow.appendChild(inputLabel);
   inputRow.appendChild(input);
   inputRow.appendChild(removeButton);
-  // addEditSelectionListener(input, pieChart);
-  // addRemoveSelectionListener(removeButton, inputRow, place);
+  addEditSelectionListener(input, pieChart);
+  addRemoveSelectionListener(removeButton, inputRow, place.id, pieChart);
   return inputRow;
 }
 
 function addEditSelectionListener(inputEle, pieChart) {
   inputEle.onkeyup = (e) => {
-    const inputId = inputEle.getAttribute('data-input-id');
+    const inputId = Number(inputEle.getAttribute('data-input-id'));
     // edit the info for the selection that has the matching id
     const newSelection = pieChart.selectedPlaces.map((place) => {
       if (inputId === place.id) {
@@ -61,18 +61,17 @@ function addEditSelectionListener(inputEle, pieChart) {
   }
 }
 
-// function addRemoveSelectionListener(buttonEle, inputRow, dataToRemove) {
-//   buttonEle.onclick = () => {
-//     elements.inputContainer.removeChild(inputRow);
-//     state = Object.assign({}, state, {
-//       selectedPlaces: state.selectedPlaces.filter(place => place.id !== dataToRemove.id),
-//     })
-//     reorderInputElements();
-//     addAddToSelectionButton();
-//     redrawChart();
-//   }
-// }
-//
+function addRemoveSelectionListener(buttonEle, inputRow, inputId, pieChart) {
+  buttonEle.onclick = () => {
+    elements.inputContainer.removeChild(inputRow);
+    const newSelection = pieChart.selectedPlaces.filter(place => place.id !== inputId);
+    pieChart.setSelectedPlaces(newSelection);
+    reorderInputElements();
+    // addAddToSelectionButton();
+    pieChart.draw();
+  }
+}
+
 // function addAddToSelectionButton() {
 //   const addBtn = document.createElement('button');
 //   addBtn.setAttribute('type', 'button');
@@ -120,11 +119,11 @@ function addEditSelectionListener(inputEle, pieChart) {
 //   gs.exit().remove();
 // }
 //
-// function reorderInputElements() {
-//   Array.from(document.getElementsByClassName('option-input'), (ele, i) => {
-//     ele.firstChild.innerHTML = (i + 1).toString();
-//   })
-// }
+function reorderInputElements() {
+  Array.from(document.getElementsByClassName('option-input'), (ele, i) => {
+    ele.firstChild.innerHTML = (i + 1).toString();
+  })
+}
 //
 // function resetRotationalOffset() {
 //   state.pieChart.rotationOffset = state.pieChart.sliceWidth() / 2;

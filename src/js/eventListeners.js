@@ -1,12 +1,5 @@
-const elements = {
-  mainContent: document.getElementById('main-content'),
-  inputContainer: document.getElementById('input-container'),
-  aboutLink: document.getElementById('about-link'),
-  editLink: document.getElementById('edit-link'),
-  closeBtn: document.getElementById('close-btn'),
-  addBtn: document.getElementById('add-btn'),
-  selectionInputs: document.getElementById('selection-input'),
-};
+import { randomlySelectAPlace } from './PieChart';
+import { elements } from './main';
 
 export function addAboutLinkListener() {
   elements.aboutLink.onclick = () => {
@@ -25,5 +18,11 @@ export function addEditLinkListener() {
 export function addCloseBtnListener() {
   elements.closeBtn.onclick = () => {
     elements.mainContent.classList.remove('active', 'about', 'edit');
+  }
+}
+
+export function addSpinButtonListener(pieChart) {
+  document.getElementById('spin-btn').onclick = () => {
+    pieChart.randomSelection()
   }
 }

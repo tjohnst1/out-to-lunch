@@ -1,6 +1,9 @@
 import * as d3 from 'd3';
+import selectedPlaces from './seedData';
+import { lightenDarkenColor } from './utilities';
+import { displaySelection, clearSelection, createInputs } from './infoPanel';
 
-export default class PieChart {
+export class PieChart {
   constructor(opts) {
     this.elementId = opts.elementId;
     this.viewboxWidth = opts.viewboxWidth;
@@ -10,6 +13,8 @@ export default class PieChart {
     this.innerWidth = opts.innerWidth;
     this.colorScale = opts.colorScale;
     this.selectedPlaces = opts.selectedPlaces;
+    this.rotationalOffset = this.getSliceWidth() / 2;
+    this.selectionIndex = null;
   }
 
   getRadius() {
@@ -20,21 +25,43 @@ export default class PieChart {
     return 360 / this.selectedPlaces.length;
   }
 
-  getRotationOffset() {
-    return state.pieChart.sliceWidth() / 2;
+  setRotationalOffset(newRotationalOffset) {
+    this.rotationalOffset = newRotationalOffset;
+  }
+
+  resetRotationalOffset() {
+    this.rotationalOffset = this.getSliceWidth() / 2;
+  }
+
+  setSelectionIndex(index) {
+    this.selectionIndex = index;
+  }
+
+  resetSelectionIndex() {
+    this.selectionIndex = null;
+  }
+
+  setSelectedPlaces(newSelection) {
+    this.selectedPlaces = newSelection;
   }
 
   draw() {
+    // clears the chart for a redraw (in the case that the user modified the entries)
+    if (document.getElementById(this.elementId)) {
+      document.getElementById(this.elementId).innerHTML = '';
+    }
+
     const svg = this.createBoundingBox();
     this.createDropShadow(svg);
     const arc = this.createArc();
     const sliceGroup = this.createSliceGroup(svg);
     this.createSlices(sliceGroup, arc);
     this.createInnerCircle(svg, sliceGroup);
+    this.createTriangle(svg)
   }
 
   createBoundingBox() {
-    return d3.select(this.elementId)
+    return d3.select(`#${this.elementId}`)
       .append('svg')
       .attr('width', '100%')
       .attr('height', '100%')
@@ -127,11 +154,58 @@ export default class PieChart {
   }
 
   createInnerCircle(svg, sliceGroup) {
-    return innerCircle = svg.append('circle')
+    return svg.append('circle')
       .attr('cx', this.innerWidth)
       .attr('cy', this.innerWidth)
       .attr('r', this.innerWidth)
       .attr('transform', `translate(${(this.viewboxWidth / 2) - this.innerWidth}, ${(this.viewboxHeight / 2) - this.innerWidth})`)
       .style('fill', '#444444')
+  }
+
+  createTriangle(svg){
+    return svg.append('path')
+      .attr('d', `M${(this.viewboxWidth / 2) - 20} 10 L${(this.viewboxWidth / 2) + 20} 10 L${this.viewboxWidth / 2} 30 Z`)
+      .style('fill', "#444444");
+  }
+
+  randomSelection() {
+    clearSelection();
+
+    const randomItemIndex = Math.floor(Math.random() * this.selectedPlaces.length);
+    const randomPlaceRotationalOffset = Math.floor(randomItemIndex * this.getSliceWidth());
+    const newOffset = this.rotationalOffset + randomPlaceRotationalOffset + 720;
+    const that = this;
+
+    d3.select('#wheel-container svg g').transition()
+      .duration(600)
+      .attrTween('transform', () => {
+        return d3.interpolateString(`translate(${that.viewboxWidth / 2}, ${that.viewboxHeight / 2}) rotate(${that.rotationalOffset})`, `translate(${that.viewboxWidth / 2}, ${that.viewboxHeight / 2}) rotate(${newOffset})`)
+      })
+      .on('end', () => {
+        that.setRotationalOffset(newOffset);
+        const selectionIndex = Math.floor((that.selectedPlaces.length - 1) - (((newOffset % 360) - (that.getSliceWidth() / 2)) / that.getSliceWidth()));
+        that.setSelectionIndex(selectionIndex)
+        that.calloutSelection(selectionIndex);
+        displaySelection(that.selectedPlaces[selectionIndex].name);
+      });
+  }
+
+  calloutSelection(index){
+    const initialColor = d3.select(`#slice-${index} path`).attr('fill').toString();
+    const lighterColor = lightenDarkenColor(initialColor, 30);
+    const darkerColor = lightenDarkenColor(initialColor, -30);
+    d3.select(`#slice-${index} path`).attr('fill', lighterColor)
+    setTimeout(() => {
+      d3.select(`#slice-${index} path`).attr('fill', darkerColor)
+    }, 300)
+    setTimeout(() => {
+      d3.select(`#slice-${index} path`).attr('fill', lighterColor)
+    }, 600)
+    setTimeout(() => {
+      d3.select(`#slice-${index} path`).attr('fill', darkerColor)
+    }, 900)
+    setTimeout(() => {
+      d3.select(`#slice-${index} path`).attr('fill', initialColor)
+    }, 1200)
   }
 }

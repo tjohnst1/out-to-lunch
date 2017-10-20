@@ -1,5 +1,6 @@
 import { randomlySelectAPlace } from './PieChart';
 import { elements } from './main';
+import { clearSelection } from './infoPanel';
 
 export function addAboutLinkListener() {
   elements.aboutLink.onclick = () => {
@@ -10,6 +11,7 @@ export function addAboutLinkListener() {
 
 export function addEditLinkListener() {
   elements.editLink.onclick = () => {
+    clearSelection()
     elements.mainContent.classList.add('active');
     elements.mainContent.classList.toggle('edit');
   }

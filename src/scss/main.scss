@@ -126,6 +126,7 @@ main {
   background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
   display: flex;
   flex-direction: column;
+  position: relative;
   h1 {
     margin: 0;
     font-size: 1em;
@@ -144,11 +145,9 @@ main {
 
 #main-content {
   padding: 20px;
-  transition: max-height 300ms;
-  max-height: 3000px;
-  &.active {
-    padding: 0;
-    max-height: 0;
+  height: 66.66vh;
+  &.active ~ .details-container {
+    height: 100vh;
   }
 }
 
@@ -169,12 +168,18 @@ main {
 }
 
 .details-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
   padding: 20px;
   background: $red;
   color: $dark-red;
-  height: 100%;
-  display: inherit;
-  flex-direction: inherit;
+  z-index: 10;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 33.33vh;
+  transition: all 300ms ease-in-out;
 }
 
 #selection {
@@ -262,18 +267,29 @@ main {
 .option-input {
   width: 80%;
   margin: 20px auto 0;
+  // transition: 300ms;
+  &.active {
+    animation-name: fadeIn;
+    transform-origin: center bottom;
+    animation-duration: 1s;
+    animation-fill-mode: both;
+  }
   label, input {
     display: inline-block;
   }
   input {
     width: 80%;
     border: 0;
-    // border: 2px solid $dark-red;
     padding: 3px 10px;
     background: #eeeeee;
   }
   label {
     width: 30px;
+  }
+  @for $i from 0 through 9 {
+    &.input-#{$i + 1} {
+      animation-delay: 150ms * $i;
+    }
   }
 }
 
@@ -302,7 +318,22 @@ main {
 @media only screen and (min-width: 480px) {
   #selection {
     font-size: 3em;
-    min-height: 64px;
+  }
+}
+
+@keyframes fadeIn {
+  from, to {
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  }
+
+  from {
+    opacity: 0;
+    transform: scale3d(.8, .8, .8);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
   }
 }
 

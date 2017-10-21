@@ -7,6 +7,7 @@ import { createInputs } from './infoPanel';
 export const elements = {
   mainContent: document.getElementById('main-content'),
   inputContainer: document.getElementById('input-container'),
+  detailsContainer: document.getElementsByClassName('details-container')[0],
   aboutLink: document.getElementById('about-link'),
   editLink: document.getElementById('edit-link'),
   closeBtn: document.getElementById('close-btn'),

@@ -489,7 +489,8 @@ main {
   text-align: center;
   background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  position: relative; }
   main h1 {
     margin: 0;
     font-size: 1em;
@@ -503,11 +504,9 @@ main {
 
 #main-content {
   padding: 20px;
-  transition: max-height 300ms;
-  max-height: 3000px; }
-  #main-content.active {
-    padding: 0;
-    max-height: 0; }
+  height: 66.66vh; }
+  #main-content.active ~ .details-container {
+    height: 100vh; }
 
 #spin-btn {
   padding: 10px 30px;
@@ -524,12 +523,18 @@ main {
     background: #e93300; }
 
 .details-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
   padding: 20px;
   background: #f83600;
   color: #922000;
-  height: 100%;
-  display: inherit;
-  flex-direction: inherit; }
+  z-index: 10;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 33.33vh;
+  transition: all 300ms ease-in-out; }
 
 #selection {
   font-size: 2em;
@@ -602,6 +607,11 @@ main {
 .option-input {
   width: 80%;
   margin: 20px auto 0; }
+  .option-input.active {
+    animation-name: fadeIn;
+    transform-origin: center bottom;
+    animation-duration: 1s;
+    animation-fill-mode: both; }
   .option-input label, .option-input input {
     display: inline-block; }
   .option-input input {
@@ -611,6 +621,26 @@ main {
     background: #eeeeee; }
   .option-input label {
     width: 30px; }
+  .option-input.input-1 {
+    animation-delay: 0ms; }
+  .option-input.input-2 {
+    animation-delay: 150ms; }
+  .option-input.input-3 {
+    animation-delay: 300ms; }
+  .option-input.input-4 {
+    animation-delay: 450ms; }
+  .option-input.input-5 {
+    animation-delay: 600ms; }
+  .option-input.input-6 {
+    animation-delay: 750ms; }
+  .option-input.input-7 {
+    animation-delay: 900ms; }
+  .option-input.input-8 {
+    animation-delay: 1050ms; }
+  .option-input.input-9 {
+    animation-delay: 1200ms; }
+  .option-input.input-10 {
+    animation-delay: 1350ms; }
 
 .remove-btn {
   padding: 1px 7px;
@@ -634,8 +664,17 @@ main {
 
 @media only screen and (min-width: 480px) {
   #selection {
-    font-size: 3em;
-    min-height: 64px; } }
+    font-size: 3em; } }
+
+@keyframes fadeIn {
+  from, to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1); }
+  from {
+    opacity: 0;
+    transform: scale3d(0.8, 0.8, 0.8); }
+  to {
+    opacity: 1;
+    transform: scale3d(1, 1, 1); } }
 
 /* ==========================================================================
    Helper classes

@@ -23,7 +23,7 @@ export function createInputs(pieChart) {
 
 function createInputRow(place, inputCount, pieChart) {
   const inputRow = document.createElement('div')
-  inputRow.classList.add('option-input');
+  inputRow.classList.add('option-input', `input-${inputCount}`);
   const inputLabel = document.createElement('label')
   inputLabel.innerHTML = inputCount;
   const input = document.createElement('input');
@@ -79,7 +79,7 @@ function addAddToSelectionButton(pieChart) {
   addBtn.id = 'add-btn';
   addBtn.innerHTML = 'Add';
 
-  // add click listener
+  // add click listener for button
   addBtn.onclick = () => {
     const newSelection = {
       id: pieChart.selectedPlaces.length,
@@ -101,6 +101,8 @@ function addAddToSelectionButton(pieChart) {
 
 function reorderInputElements() {
   Array.from(document.getElementsByClassName('option-input'), (ele, i) => {
-    ele.firstChild.innerHTML = (i + 1).toString();
+    const num = (i + 1).toString();
+    ele.firstChild.innerHTML = num;
+    ele.className = `option-input input-${num}`;
   })
 }

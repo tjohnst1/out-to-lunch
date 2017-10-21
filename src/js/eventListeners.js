@@ -13,13 +13,19 @@ export function addEditLinkListener() {
   elements.editLink.onclick = () => {
     clearSelection()
     elements.mainContent.classList.add('active');
-    elements.mainContent.classList.toggle('edit');
+    elements.mainContent.classList.add('edit');
+    Array.from(document.getElementsByClassName('option-input')).forEach(node => {
+      node.classList.add('active');
+    })
   }
 }
 
 export function addCloseBtnListener() {
   elements.closeBtn.onclick = () => {
     elements.mainContent.classList.remove('active', 'about', 'edit');
+    Array.from(document.getElementsByClassName('option-input')).forEach(node => {
+      node.classList.remove('active');
+    })
   }
 }
 

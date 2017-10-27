@@ -171,7 +171,7 @@ main {
   position: absolute;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 10px;
   background: $red;
   color: $dark-red;
   z-index: 10;
@@ -265,20 +265,27 @@ main {
 }
 
 .option-input {
-  width: 80%;
+  width: 100%;
   margin: 20px auto 0;
   // transition: 300ms;
-  &.active {
+  &.active, &.add {
     animation-name: fadeIn;
     transform-origin: center bottom;
     animation-duration: 1s;
     animation-fill-mode: both;
   }
+  &.remove {
+    animation-name: fadeOut;
+    transform-origin: center bottom;
+    animation-duration: 300ms;
+    animation-fill-mode: both;
+    animation-delay: 0s !important;
+  }
   label, input {
     display: inline-block;
   }
   input {
-    width: 80%;
+    width: 70%;
     border: 0;
     padding: 3px 10px;
     background: #eeeeee;
@@ -319,22 +326,41 @@ main {
   #selection {
     font-size: 3em;
   }
+  .option-input {
+    width: 80%;
+    input {
+      width: 80%;
+    }
+  }
 }
 
 @keyframes fadeIn {
   from, to {
     animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
-
   from {
     opacity: 0;
     transform: scale3d(.8, .8, .8);
   }
-
   to {
     opacity: 1;
     transform: scale3d(1, 1, 1);
   }
+}
+
+@keyframes fadeOut {
+  from, to {
+    animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+  }
+  from {
+    opacity: 1;
+    transform: scale3d(1, 1, 1);
+  }
+  to {
+    opacity: 0;
+    transform: scale3d(.8, .8, .8);
+  }
+
 }
 
 /* ==========================================================================

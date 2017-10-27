@@ -13,6 +13,7 @@ export const elements = {
   closeBtn: document.getElementById('close-btn'),
   addBtn: document.getElementById('add-btn'),
   selectionInputs: document.getElementById('selection-input'),
+  editContainer: document.getElementById('edit-container'),
 };
 
 const config = {

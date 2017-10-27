@@ -21,9 +21,12 @@ export function createInputs(pieChart) {
   });
 }
 
-function createInputRow(place, inputCount, pieChart) {
+function createInputRow(place, inputCount, pieChart, classToAdd='') {
   const inputRow = document.createElement('div')
   inputRow.classList.add('option-input', `input-${inputCount}`);
+  if (classToAdd) {
+    inputRow.classList.add(classToAdd);
+  }
   const inputLabel = document.createElement('label')
   inputLabel.innerHTML = inputCount;
   const input = document.createElement('input');
@@ -63,12 +66,19 @@ function addEditSelectionListener(inputEle, pieChart) {
 
 function addRemoveSelectionListener(buttonEle, inputRow, inputId, pieChart) {
   buttonEle.onclick = () => {
-    elements.inputContainer.removeChild(inputRow);
-    const newSelection = pieChart.selectedPlaces.filter(place => place.id !== inputId);
-    pieChart.setSelectedPlaces(newSelection);
-    reorderInputElements();
-    addAddToSelectionButton(pieChart);
-    pieChart.draw();
+    // add a class to trigger the exit animation
+    inputRow.classList.add('remove');
+    // wait 300 for the exit animation to finish before actually removing the element from screen
+    setTimeout(() => {
+      elements.inputContainer.removeChild(inputRow);
+      const newSelection = pieChart.selectedPlaces.filter(place => place.id !== inputId);
+      pieChart.setSelectedPlaces(newSelection);
+      reorderInputElements();
+      // add the "add" button only if there are less than 9 entries (more than 9 makes the chart kinda hard to read)
+      addAddToSelectionButton(pieChart);
+
+      pieChart.draw();
+    }, 300)
   }
 }
 
@@ -87,16 +97,30 @@ function addAddToSelectionButton(pieChart) {
     };
 
     pieChart.setSelectedPlaces([...pieChart.selectedPlaces, newSelection]);
-    const inputRow = createInputRow(newSelection, pieChart.selectedPlaces.length, pieChart);
+    var inputRow = createInputRow(newSelection, pieChart.selectedPlaces.length, pieChart, 'add');
     elements.inputContainer.appendChild(inputRow);
     reorderInputElements();
-    pieChart.draw();
+
+    // check if there are already 9 entries (more than 9 makes the chart kinda hard to read)
+    if (pieChart.getSelectedPlaces().length > 8) {
+      removeAddToSelectionButton();
+    }
+
+    // wait for the animation to complete
+    setTimeout(() => {
+      pieChart.draw();
+    }, 300)
   }
 
   // if there isn't a add button already present, add it
   if (!document.getElementById('add-btn')) {
     document.getElementById('edit-container').appendChild(addBtn);
   }
+}
+
+function removeAddToSelectionButton() {
+  elements.editContainer.removeChild(document.getElementById('add-btn'));
+  console.log('called')
 }
 
 function reorderInputElements() {

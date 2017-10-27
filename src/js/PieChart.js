@@ -45,6 +45,10 @@ export class PieChart {
     this.selectedPlaces = newSelection;
   }
 
+  getSelectedPlaces() {
+    return this.selectedPlaces;
+  }
+
   draw() {
     // clears the chart for a redraw (in the case the chart is already on screen and the user modified the entries)
     document.getElementById(this.elementId).innerHTML = '';

@@ -69,7 +69,6 @@ export class PieChart {
       .attr('width', '100%')
       .attr('height', '100%')
       .attr('viewBox', `0 0 ${this.viewboxWidth} ${this.viewboxHeight}`)
-      .style('max-width', `${this.viewboxWidth}px`);
   }
 
   createDropShadow(svg) {

@@ -141,11 +141,15 @@ main {
 
 #wheel-container {
   margin: 10px auto 0;
+  svg {
+    max-height: 50vh;
+  }
 }
 
 #main-content {
   padding: 20px;
-  height: 66.66vh;
+  height: 75vh;
+  transform-origin: top;
   &.active ~ .details-container {
     height: 100vh;
   }
@@ -178,7 +182,7 @@ main {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 33.33vh;
+  height: 25vh;
   transition: all 300ms ease-in-out;
 }
 
@@ -330,6 +334,11 @@ main {
     width: 80%;
     input {
       width: 80%;
+    }
+  }
+  #wheel-container {
+    svg {
+      max-height: 55vh;
     }
   }
 }

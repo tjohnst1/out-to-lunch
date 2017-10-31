@@ -87,13 +87,13 @@ function addAddToSelectionButton(pieChart) {
   const addBtn = document.createElement('button');
   addBtn.setAttribute('type', 'button');
   addBtn.id = 'add-btn';
-  addBtn.innerHTML = 'Add';
+  addBtn.innerHTML = 'Add an Entry';
 
   // add click listener for button
   addBtn.onclick = () => {
     const newSelection = {
       id: pieChart.selectedPlaces.length,
-      name: 'placeholder'
+      name: ''
     };
 
     pieChart.setSelectedPlaces([...pieChart.selectedPlaces, newSelection]);
@@ -118,9 +118,12 @@ function addAddToSelectionButton(pieChart) {
   }
 }
 
+export function toggleHideElement(ele) {
+  ele.classList.toggle('hidden');
+}
+
 function removeAddToSelectionButton() {
   elements.editContainer.removeChild(document.getElementById('add-btn'));
-  console.log('called')
 }
 
 function reorderInputElements() {

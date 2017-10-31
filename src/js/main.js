@@ -1,7 +1,7 @@
 import selectedPlaces from './seedData';
 import * as d3 from 'd3';
 import { PieChart } from './PieChart'
-import { addAboutLinkListener, addEditLinkListener, addCloseBtnListener, addSpinButtonListener } from './eventListeners'
+import { addAboutLinkListener, addEditLinkListener, addCloseBtnListener, addSpinButtonListener, addResizeListener } from './eventListeners'
 import { createInputs } from './infoPanel';
 
 export const elements = {
@@ -38,23 +38,3 @@ addCloseBtnListener();
 addSpinButtonListener(lunchChart);
 createInputs(lunchChart);
 addResizeListener(elements.mainContent);
-
-// resizes the chart + the text and button in response to vertical height resizing
-function addResizeListener(ele) {
-  const initialHeight = ele.offsetHeight;
-
-  window.addEventListener('resize', function() {
-    resizeWhenNecessary(ele, initialHeight);
-  })
-}
-
-function resizeWhenNecessary(ele, initialHeight) {
-  const currentHeight = ele.offsetHeight;
-  const scale = currentHeight / initialHeight;
-
-  if (scale < 1) {
-    window.requestAnimationFrame(() => {
-      return ele.style.transform = `scale(${scale})`;
-    })
-  }
-}

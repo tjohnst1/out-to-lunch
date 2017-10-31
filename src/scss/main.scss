@@ -136,7 +136,7 @@ main {
 }
 
 .label {
-  font-size: 12px;
+  font-size: 0.8em;
 }
 
 #wheel-container {
@@ -175,7 +175,7 @@ main {
   position: absolute;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 20px;
   background: $red;
   color: $dark-red;
   z-index: 10;
@@ -201,6 +201,8 @@ main {
     #close-btn {
       height: 35px;
       transform: scale(1);
+      transition: transform 300ms;
+      transition-delay: 300ms;
     }
   }
   &.about ~ .details-container .about-container, &.edit ~ .details-container #edit-container {
@@ -224,6 +226,7 @@ main {
   display: inline-block;
   border-left: 1px solid $dark-red;
   padding-left: 10px;
+  font-size: 0.7em;
   &:hover {
     text-decoration: underline;
   }
@@ -241,8 +244,7 @@ main {
   display: flex;
   margin-left: auto;
   transform: scale(0);
-  transition: transform 300ms;
-  transition-delay: 300ms;
+  transition: transform 0ms;
   cursor: pointer;
   &:before {
     content: '';
